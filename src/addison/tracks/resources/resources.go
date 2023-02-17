@@ -32,11 +32,11 @@ func updateTrack(w http.ResponseWriter, r *http.Request) {
 func readTrack(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	if track, num_found := repository.Read(id); num_found > 0 {
+	if track, numFound := repository.Read(id); numFound > 0 {
 		d := repository.Track{Id: track.Id, Audio: track.Audio}
 		w.WriteHeader(200) /* OK */
 		json.NewEncoder(w).Encode(d)
-	} else if num_found == 0 {
+	} else if numFound == 0 {
 		w.WriteHeader(404) /* Not Found */
 	} else {
 		w.WriteHeader(500) /* Internal Server Error */
@@ -44,10 +44,10 @@ func readTrack(w http.ResponseWriter, r *http.Request) {
 }
 
 func listAllTrackIds(w http.ResponseWriter, r *http.Request) {
-	if tracks, num_found := repository.ListAllIds(); num_found > 0 {
+	if tracks, numFound := repository.ListAllIds(); numFound > 0 {
 		w.WriteHeader(200) /* OK */
 		json.NewEncoder(w).Encode(tracks)
-	} else if num_found == 0 {
+	} else if numFound == 0 {
 		w.WriteHeader(404) /* Not Found */
 	} else {
 		w.WriteHeader(500) /* Internal Server Error */
