@@ -34,11 +34,8 @@ func readTrack(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 	if track, numFound := repository.Read(id); numFound > 0 {
 		d := repository.Track{Id: track.Id, Audio: track.Audio}
-		err := json.NewEncoder(w).Encode(d)
-		if err != nil {
-			w.WriteHeader(500) /* Internal Server Error */
-		}
 		w.WriteHeader(200) /* OK */
+		json.NewEncoder(w).Encode(d)
 	} else if numFound == 0 {
 		w.WriteHeader(404) /* Not Found */
 	} else {
@@ -46,13 +43,10 @@ func readTrack(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func listAllTrackIds(w http.ResponseWriter, _ *http.Request) {
+func listAllTrackIds(w http.ResponseWriter, r *http.Request) {
 	if tracks, numFound := repository.ListAllIds(); numFound > 0 {
-		err := json.NewEncoder(w).Encode(tracks)
-		if err != nil {
-			w.WriteHeader(500) /* Internal Server Error */
-		}
 		w.WriteHeader(200) /* OK */
+		json.NewEncoder(w).Encode(tracks)
 	} else if numFound == 0 {
 		w.WriteHeader(404) /* Not Found */
 	} else {
