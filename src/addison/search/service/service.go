@@ -1,13 +1,13 @@
-package main
+package service
 
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
+
+	"github.com/AudDMusic/audd-go"
 )
 
 // Get the API token from token.txt.
@@ -16,20 +16,31 @@ func getAPIToken() string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(file)
 	scanner := bufio.NewScanner(file)
 	scanner.Scan()
 	return scanner.Text()
 }
 
-func main() {
-	data := url.Values{
-		"url":    {"https://audd.tech/example.mp3"},
-		"return": {"apple_music,spotify"},
-		"api_token": {getAPIToken()},
+func SearchTrack(w http.ResponseWriter, r *http.Request) string {
+	base64Audio := r.FormValue("Audio")
+	client := audd.NewClient(getAPIToken())
+	url := "https://audd.tech/example.mp3"
+	additionalParams := map[string]string{"audio": base64Audio}
+	result, err := client.Recognize(url, "apple_music,spotify", additionalParams)
+	if err != nil {
+		panic(err)
 	}
-	response, _ := http.PostForm("https://api.audd.io/", data)
-	defer response.Body.Close()
-	body, _ := io.ReadAll(response.Body)
-	fmt.Println(string(body))
+	fmt.Printf("%s - %s.\nTimecode: %s, album: %s. ℗ %s, %s\n\n"+
+		"Listen: %s\nOr directly on:\n- Apple Music: %s, \n- Spotify: %s",
+		result.Artist, result.Title, result.Timecode, result.Album,
+		result.Label, result.ReleaseDate, result.SongLink,
+		result.AppleMusic.URL, result.Spotify.ExternalUrls.Spotify)
+	w.WriteHeader(200) /* OK */
+	return result.Title
 }
