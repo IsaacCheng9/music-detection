@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/AudDMusic/audd-go"
@@ -27,8 +26,7 @@ func getAPIToken() string {
 	return scanner.Text()
 }
 
-func SearchTrack(w http.ResponseWriter, r *http.Request) string {
-	base64Audio := r.FormValue("Audio")
+func SearchAudDTracksAPI(base64Audio string) string {
 	client := audd.NewClient(getAPIToken())
 	url := "https://audd.tech/example.mp3"
 	additionalParams := map[string]string{"audio": base64Audio}
@@ -41,6 +39,5 @@ func SearchTrack(w http.ResponseWriter, r *http.Request) string {
 		result.Artist, result.Title, result.Timecode, result.Album,
 		result.Label, result.ReleaseDate, result.SongLink,
 		result.AppleMusic.URL, result.Spotify.ExternalUrls.Spotify)
-	w.WriteHeader(200) /* OK */
 	return result.Title
 }
