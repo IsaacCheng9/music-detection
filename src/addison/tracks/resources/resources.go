@@ -43,7 +43,7 @@ func readTrack(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func listAllTrackIds(w http.ResponseWriter, r *http.Request) {
+func listAllTrackIds(w http.ResponseWriter, _ *http.Request) {
 	if tracks, numFound := repository.ListAllIds(); numFound > 0 {
 		w.WriteHeader(200) /* OK */
 		json.NewEncoder(w).Encode(tracks)
