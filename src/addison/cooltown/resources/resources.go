@@ -1,28 +1,42 @@
 package resources
 
 import (
+	"cooltown/service"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
-	"search/service"
 )
 
 func getTrackFromFragment(w http.ResponseWriter, r *http.Request) {
 	t := map[string]interface{}{}
+	var id string
+	fmt.Println("1")
 	if err := json.NewDecoder(r.Body).Decode(&t); err == nil {
-		if base64audio, ok := t["Audio"].(string); ok {
-			if title, err := service.SearchAudDTracksAPI(base64audio); err == nil {
-				u := map[string]interface{}{"Id": title}
-				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(u)
-				return
+		if base64Audio, ok := t["Audio"].(string); ok {
+			if title, err := service.GetIdFromAudioFragment(base64Audio); err == nil {
+				id = title
 			} else {
-				w.WriteHeader(http.StatusInternalServerError)
+				fmt.Println("1 - Track 404")
+				w.WriteHeader(http.StatusNotFound)
 				return
 			}
 		}
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
 	}
-	w.WriteHeader(http.StatusBadRequest)
+
+	fmt.Println("2")
+	if audio, err := service.GetAudioFromId(id); err == nil {
+		u := map[string]interface{}{"Audio": audio}
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(u)
+		return
+	} else {
+		fmt.Println("3 - Audio 404")
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 }
 
 func Router() http.Handler {
