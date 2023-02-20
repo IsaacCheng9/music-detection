@@ -51,12 +51,12 @@ func readTrack(w http.ResponseWriter, r *http.Request) {
 
 func listAllTrackIds(w http.ResponseWriter, _ *http.Request) {
 	if tracks, numFound := repository.ListAllIds(); numFound > 0 {
-		w.WriteHeader(200) /* OK */
 		json.NewEncoder(w).Encode(tracks)
-	} else if numFound == 0 {
-		w.WriteHeader(404) /* Not Found */
+		// 200 OK - the list of tracks has been returned successfully.
+		w.WriteHeader(200)
 	} else {
-		w.WriteHeader(500) /* Internal Server Error */
+		// 500 Internal Server Error - the database is not available.
+		w.WriteHeader(500)
 	}
 }
 
