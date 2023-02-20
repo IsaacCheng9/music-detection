@@ -15,17 +15,23 @@ func updateTrack(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&track); err == nil {
 		if id == track.Id {
 			if n := repository.Update(track); n > 0 {
-				w.WriteHeader(204) /* No Content */
+				// 204 No Content - the track already existed and has been
+				// updated successfully.
+				w.WriteHeader(204)
 			} else if n := repository.Insert(track); n > 0 {
-				w.WriteHeader(201) /* Created */
+				// 201 Created - the track has been created successfully.
+				w.WriteHeader(201)
 			} else {
-				w.WriteHeader(500) /* Internal Server Error */
+				w.WriteHeader(500)
 			}
 		} else {
-			w.WriteHeader(400) /* Bad Request */
+			// 400 Bad Request - the id in the URL does not match the id in the
+			// request body.
+			w.WriteHeader(400)
 		}
 	} else {
-		w.WriteHeader(400) /* Bad Request */
+		// 400 Bad Request - the request body could not be decoded.
+		w.WriteHeader(400)
 	}
 }
 
