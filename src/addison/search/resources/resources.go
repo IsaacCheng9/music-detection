@@ -14,16 +14,23 @@ func searchTrack(w http.ResponseWriter, r *http.Request) {
 		if base64audio, ok := t["Audio"].(string); ok {
 			if title, err := service.SearchAudDTracksAPI(base64audio); err == nil {
 				u := map[string]interface{}{"Id": title}
-				w.WriteHeader(http.StatusOK)
 				json.NewEncoder(w).Encode(u)
-				return
+				// 200 OK - the track has been found.
+				w.WriteHeader(200)
+			} else if title == "" {
+				// 404 Not Found - the track could not be recognised.
+				w.WriteHeader(404)
 			} else {
-				w.WriteHeader(http.StatusInternalServerError)
-				return
+				// 500 Internal Server Error - the API was unable to process the
+				// request.
+				w.WriteHeader(500)
 			}
 		}
+	} else {
+		// 400 Bad Request - the request could not be decoded by the server
+		// due to malformed syntax.
+		w.WriteHeader(400)
 	}
-	w.WriteHeader(http.StatusBadRequest)
 }
 
 func Router() http.Handler {
