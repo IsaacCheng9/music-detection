@@ -40,12 +40,15 @@ func readTrack(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 	if track, numFound := repository.Read(id); numFound > 0 {
 		d := repository.Track{Id: track.Id, Audio: track.Audio}
-		w.WriteHeader(200) /* OK */
 		json.NewEncoder(w).Encode(d)
+		// 200 OK - the track has been returned successfully.
+		w.WriteHeader(200)
 	} else if numFound == 0 {
-		w.WriteHeader(404) /* Not Found */
+		// 404 Not Found - the track does not exist.
+		w.WriteHeader(404)
 	} else {
-		w.WriteHeader(500) /* Internal Server Error */
+		// 500 Internal Server Error - the database is not available.
+		w.WriteHeader(500)
 	}
 }
 
