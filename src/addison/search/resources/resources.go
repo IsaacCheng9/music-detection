@@ -12,7 +12,7 @@ func searchTrack(w http.ResponseWriter, r *http.Request) {
 	t := map[string]interface{}{}
 	if err := json.NewDecoder(r.Body).Decode(&t); err == nil {
 		if base64audio, ok := t["Audio"].(string); ok {
-			if title, err := service.SearchAudDTracksAPI(base64audio); err == nil && title != "" {
+			if title, err := service.SearchAuddTracksAPI(base64audio); err == nil && title != "" {
 				u := map[string]interface{}{"Id": title}
 				json.NewEncoder(w).Encode(u)
 				// 200 OK - the track has been found.

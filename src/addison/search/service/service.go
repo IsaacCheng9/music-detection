@@ -1,31 +1,14 @@
 package service
 
 import (
-	"bufio"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"net/url"
-	"os"
 )
 
-// Get the API token from token.txt.
-func getAPIToken() string {
-	file, err := os.Open("../token.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}(file)
-	scanner := bufio.NewScanner(file)
-	scanner.Scan()
-	return scanner.Text()
-}
+// Store the API token for the AudD API.
+const TOKEN = "b30fbcc812b45d5379114bd1f430a32c"
 
 func titleOf(t map[string]interface{}) (string, error) {
 	if response, ok := t["result"].(map[string]interface{}); ok {
@@ -36,9 +19,9 @@ func titleOf(t map[string]interface{}) (string, error) {
 	return "", errors.New("titleOf")
 }
 
-func SearchAudDTracksAPI(base64Audio string) (string, error) {
+func SearchAuddTracksAPI(base64Audio string) (string, error) {
 	data := url.Values{
-		"api_token": {"b30fbcc812b45d5379114bd1f430a32c"},
+		"api_token": {TOKEN},
 		"audio":     {base64Audio},
 		"return":    {"apple_music,spotify"},
 	}
