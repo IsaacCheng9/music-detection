@@ -8,7 +8,7 @@ import (
 )
 
 // Store the API token for the AudD API.
-const TOKEN = "b30fbcc812b45d5379114bd1f430a32c"
+const TOKEN = "a17de6c97a4dcc228fc6e051a19fbea3"
 
 func titleOf(t map[string]interface{}) (string, error) {
 	if response, ok := t["result"].(map[string]interface{}); ok {
