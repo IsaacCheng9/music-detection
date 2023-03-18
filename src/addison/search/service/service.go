@@ -31,8 +31,12 @@ func SearchAuddTracksAPI(base64Audio string) (string, error) {
 	if err := json.NewDecoder(response.Body).Decode(&t); err == nil {
 		if title, err := titleOf(t); err == nil {
 			return title, nil
+		} else {
+			// The track could not be recognised by the AudD API.
+			return "", nil
 		}
+	} else {
+		// The AudD API was unable to process the request.
+		return "", err
 	}
-
-	return "", errors.New("SearchAudDTracksAPI")
 }
