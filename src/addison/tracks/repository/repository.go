@@ -61,7 +61,7 @@ func ListAllIds() ([]string, int64) {
 		defer stmt.Close()
 		rows, err := stmt.Query()
 		if err == nil {
-			var ids []string
+			var ids = make([]string, 0)
 			for rows.Next() {
 				var id string
 				if err := rows.Scan(&id); err == nil {

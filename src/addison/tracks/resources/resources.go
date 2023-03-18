@@ -54,7 +54,7 @@ func readTrack(w http.ResponseWriter, r *http.Request) {
 }
 
 func listAllTrackIds(w http.ResponseWriter, _ *http.Request) {
-	if tracks, numFound := repository.ListAllIds(); numFound > 0 {
+	if tracks, numFound := repository.ListAllIds(); numFound >= 0 {
 		json.NewEncoder(w).Encode(tracks)
 		// 200 OK - the list of tracks has been returned successfully.
 		w.WriteHeader(200)
