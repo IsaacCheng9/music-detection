@@ -21,6 +21,15 @@ func Init() {
 	}
 }
 
+func Clear() int {
+	const query = "DROP TABLE IF EXISTS Tracks"
+	if _, err := repo.DB.Exec(query); err == nil {
+		return 0
+	} else {
+		return -1
+	}
+}
+
 func Create() int {
 	const query = "CREATE TABLE IF NOT EXISTS Tracks" +
 		"(Id TEXT PRIMARY KEY, Audio TEXT)"
