@@ -25,6 +25,10 @@ func searchTrack(w http.ResponseWriter, r *http.Request) {
 				// 404 Not Found - the track could not be recognised.
 				w.WriteHeader(404)
 			}
+		} else {
+			// 400 Bad Request - the request could not be decoded by the server
+			// due to malformed syntax.
+			w.WriteHeader(400)
 		}
 	} else {
 		// 400 Bad Request - the request could not be decoded by the server
