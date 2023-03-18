@@ -22,6 +22,7 @@ func updateTrack(w http.ResponseWriter, r *http.Request) {
 				// 201 Created - the track has been created successfully.
 				w.WriteHeader(201)
 			} else {
+				// 500 Internal Server Error - the database is not available.
 				w.WriteHeader(500)
 			}
 		} else {
