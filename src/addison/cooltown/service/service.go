@@ -13,13 +13,15 @@ func GetAudioFromId(id string) (string, error) {
 	uri := "http://localhost:3000/tracks/" + id
 	if req, err := http.NewRequest("GET", uri, nil); err == nil {
 		if rsp, err := client.Do(req); err == nil {
-			if rsp.StatusCode == http.StatusOK {
+			if rsp.StatusCode == 200 {
 				t := map[string]interface{}{}
 				if err := json.NewDecoder(rsp.Body).Decode(&t); err == nil {
 					if audio, err := audioOf(t); err == nil {
 						return audio, nil
 					}
 				}
+			} else if rsp.StatusCode == 404 {
+				return "", nil
 			}
 		}
 	}
@@ -39,13 +41,15 @@ func GetIdFromAudioFragment(audio string) (string, error) {
 	jsonData, _ := json.Marshal(map[string]string{"Audio": audio})
 	if req, err := http.NewRequest("POST", uri, bytes.NewBuffer(jsonData)); err == nil {
 		if rsp, err := client.Do(req); err == nil {
-			if rsp.StatusCode == http.StatusOK {
+			if rsp.StatusCode == 200 {
 				t := map[string]interface{}{}
 				if err := json.NewDecoder(rsp.Body).Decode(&t); err == nil {
 					if title, err := titleOf(t); err == nil {
 						return title, nil
 					}
 				}
+			} else if rsp.StatusCode == 404 {
+				return "", nil
 			}
 		}
 	}
