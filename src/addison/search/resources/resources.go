@@ -33,7 +33,7 @@ func searchTrack(w http.ResponseWriter, r *http.Request) {
 
 		} else {
 			// 400 Bad Request - the request could not be decoded by the server
-			// due to malformed syntax.
+			// as the 'Audio' field is missing.
 			w.WriteHeader(400)
 		}
 	} else {
