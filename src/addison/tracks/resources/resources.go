@@ -17,22 +17,22 @@ func updateTrack(w http.ResponseWriter, r *http.Request) {
 			if n := repository.Update(track); n > 0 {
 				// 204 No Content - the track already existed and has been
 				// updated successfully.
-				w.WriteHeader(204)
+				w.WriteHeader(http.StatusNoContent)
 			} else if n := repository.Insert(track); n > 0 {
 				// 201 Created - the track has been created successfully.
-				w.WriteHeader(201)
+				w.WriteHeader(http.StatusCreated)
 			} else {
 				// 500 Internal Server Error - the database is not available.
-				w.WriteHeader(500)
+				w.WriteHeader(http.StatusInternalServerError)
 			}
 		} else {
 			// 400 Bad Request - the id in the URL does not match the id in the
 			// request body.
-			w.WriteHeader(400)
+			w.WriteHeader(http.StatusBadRequest)
 		}
 	} else {
 		// 400 Bad Request - the request body could not be decoded.
-		w.WriteHeader(400)
+		w.WriteHeader(http.StatusBadRequest)
 	}
 }
 
@@ -42,29 +42,29 @@ func readTrack(w http.ResponseWriter, r *http.Request) {
 	if track, numFound := repository.Read(id); numFound > 0 {
 		d := repository.Track{Id: track.Id, Audio: track.Audio}
 		if err := json.NewEncoder(w).Encode(d); err != nil {
-			w.WriteHeader(500)
+			w.WriteHeader(http.StatusInternalServerError)
 		}
 		// 200 OK - the track has been returned successfully.
-		w.WriteHeader(200)
+		w.WriteHeader(http.StatusOK)
 	} else if numFound == 0 {
 		// 404 Not Found - the track does not exist.
-		w.WriteHeader(404)
+		w.WriteHeader(http.StatusNotFound)
 	} else {
 		// 500 Internal Server Error - the database is not available.
-		w.WriteHeader(500)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
 func listAllTrackIds(w http.ResponseWriter, _ *http.Request) {
 	if tracks, numFound := repository.ListAllIds(); numFound >= 0 {
 		if err := json.NewEncoder(w).Encode(tracks); err != nil {
-			w.WriteHeader(500)
+			w.WriteHeader(http.StatusInternalServerError)
 		}
 		// 200 OK - the list of tracks has been returned successfully.
-		w.WriteHeader(200)
+		w.WriteHeader(http.StatusOK)
 	} else {
 		// 500 Internal Server Error - the database is not available.
-		w.WriteHeader(500)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
@@ -73,13 +73,13 @@ func deleteTrack(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 	if n := repository.Delete(id); n > 0 {
 		// 204 No Content - the track has been deleted successfully.
-		w.WriteHeader(204)
+		w.WriteHeader(http.StatusNoContent)
 	} else if n == 0 {
 		// 404 Not Found - the track does not exist.
-		w.WriteHeader(404)
+		w.WriteHeader(http.StatusNotFound)
 	} else {
 		// 500 Internal Server Error - the database is not available.
-		w.WriteHeader(500)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 

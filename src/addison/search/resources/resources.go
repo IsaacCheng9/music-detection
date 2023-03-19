@@ -16,32 +16,32 @@ func searchTrack(w http.ResponseWriter, r *http.Request) {
 				if title, err := service.SearchAuddTracksAPI(base64audio); err == nil && title != "" {
 					u := map[string]interface{}{"Id": title}
 					if err := json.NewEncoder(w).Encode(u); err != nil {
-						w.WriteHeader(500)
+						w.WriteHeader(http.StatusInternalServerError)
 					}
 					// 200 OK - the track has been found.
-					w.WriteHeader(200)
+					w.WriteHeader(http.StatusOK)
 				} else if err != nil {
 					// 500 Internal Server Error - the API was unable to process
 					// the request.
-					w.WriteHeader(500)
+					w.WriteHeader(http.StatusInternalServerError)
 				} else {
 					// 404 Not Found - the track could not be recognised.
-					w.WriteHeader(404)
+					w.WriteHeader(http.StatusNotFound)
 				}
 			} else {
 				// 404 Not Found - the track could not be recognised.
-				w.WriteHeader(404)
+				w.WriteHeader(http.StatusNotFound)
 			}
 
 		} else {
 			// 400 Bad Request - the request could not be decoded by the server
 			// as the 'Audio' field is missing.
-			w.WriteHeader(400)
+			w.WriteHeader(http.StatusBadRequest)
 		}
 	} else {
 		// 400 Bad Request - the request could not be decoded by the server
 		// due to malformed syntax.
-		w.WriteHeader(400)
+		w.WriteHeader(http.StatusBadRequest)
 	}
 }
 

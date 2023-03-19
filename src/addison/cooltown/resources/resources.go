@@ -19,49 +19,49 @@ func getTrackFromFragment(w http.ResponseWriter, r *http.Request) {
 				if title, err := service.GetIdFromAudioFragment(base64Audio); err == nil && title != "" {
 					id = title
 				} else if err != nil {
-					// 500 Internal Server Error - the server was unable to process
-					// the request.
-					w.WriteHeader(500)
+					// 500 Internal Server Error - the server was unable to
+					// process the request.
+					w.WriteHeader(http.StatusInternalServerError)
 					return
 				} else {
 					// 404 Not Found - no matching track and ID for the audio
 					// fragment was found.
-					w.WriteHeader(404)
+					w.WriteHeader(http.StatusNotFound)
 					return
 				}
 			} else {
 				// 404 Not Found - no matching track and ID for the audio
 				// fragment was found.
-				w.WriteHeader(404)
+				w.WriteHeader(http.StatusNotFound)
 				return
 			}
 		} else {
 			// 400 Bad Request - the request could not be decoded by the server
 			// as the 'Audio' field is missing.
-			w.WriteHeader(400)
+			w.WriteHeader(http.StatusBadRequest)
 		}
 	} else {
 		// 400 Bad Request - the request could not be decoded by the server due
 		// to malformed syntax.
-		w.WriteHeader(400)
+		w.WriteHeader(http.StatusBadRequest)
 	}
 
 	// Part 2: Get the audio fragment from the ID using the Tracks microservice.
 	if audio, err := service.GetAudioFromId(id); err == nil && audio != "" {
 		u := map[string]interface{}{"Audio": audio}
 		if err := json.NewEncoder(w).Encode(u); err != nil {
-			w.WriteHeader(500)
+			w.WriteHeader(http.StatusInternalServerError)
 		}
 		// 200 OK - the matching track for the audio fragment has been found.
-		w.WriteHeader(200)
+		w.WriteHeader(http.StatusOK)
 	} else if err != nil {
 		// 500 Internal Server Error - the server was unable to process the
 		// request as the database is down.
-		w.WriteHeader(500)
+		w.WriteHeader(http.StatusInternalServerError)
 	} else {
 		// 404 Not Found - no matching track for the audio fragment was found in
 		// the database.
-		w.WriteHeader(404)
+		w.WriteHeader(http.StatusNotFound)
 	}
 }
 
