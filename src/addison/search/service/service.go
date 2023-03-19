@@ -12,16 +12,16 @@ import (
 // !IMPORTANT: Store the API token for the AudD API.
 const TOKEN = "a17de6c97a4dcc228fc6e051a19fbea3"
 
-func titleOf(t map[string]interface{}) (string, error) {
+func getTitleFromBody(t map[string]interface{}) (string, error) {
 	if response, ok := t["result"].(map[string]interface{}); ok {
 		if title, ok := response["title"].(string); ok {
 			return title, nil
 		}
 	}
-	return "", errors.New("titleOf")
+	return "", errors.New("getTitleFromBody")
 }
 
-func SearchAuddTracksAPI(base64Audio string) (string, error) {
+func SearchAuddRecognitionAPI(base64Audio string) (string, error) {
 	data := url.Values{
 		"api_token": {TOKEN},
 		"audio":     {base64Audio},
@@ -35,7 +35,7 @@ func SearchAuddTracksAPI(base64Audio string) (string, error) {
 	}(response.Body)
 	t := map[string]interface{}{}
 	if err := json.NewDecoder(response.Body).Decode(&t); err == nil {
-		if title, err := titleOf(t); err == nil {
+		if title, err := getTitleFromBody(t); err == nil {
 			return title, nil
 		} else {
 			// The track could not be recognised by the AudD API.

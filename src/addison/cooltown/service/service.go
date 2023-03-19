@@ -16,7 +16,7 @@ func GetAudioFromId(id string) (string, error) {
 			if rsp.StatusCode == 200 {
 				t := map[string]interface{}{}
 				if err := json.NewDecoder(rsp.Body).Decode(&t); err == nil {
-					if audio, err := audioOf(t); err == nil {
+					if audio, err := getAudioFromBody(t); err == nil {
 						return audio, nil
 					}
 				}
@@ -28,11 +28,11 @@ func GetAudioFromId(id string) (string, error) {
 	return "", errors.New("GetAudioFromId")
 }
 
-func audioOf(t map[string]interface{}) (string, error) {
+func getAudioFromBody(t map[string]interface{}) (string, error) {
 	if audio, ok := t["Audio"].(string); ok {
 		return audio, nil
 	}
-	return "", errors.New("audioOf")
+	return "", errors.New("getAudioFromBody")
 }
 
 func GetIdFromAudioFragment(audio string) (string, error) {
@@ -44,8 +44,8 @@ func GetIdFromAudioFragment(audio string) (string, error) {
 			if rsp.StatusCode == 200 {
 				t := map[string]interface{}{}
 				if err := json.NewDecoder(rsp.Body).Decode(&t); err == nil {
-					if title, err := titleOf(t); err == nil {
-						return title, nil
+					if id, err := getIdFromBody(t); err == nil {
+						return id, nil
 					}
 				}
 			} else if rsp.StatusCode == 404 {
@@ -56,15 +56,15 @@ func GetIdFromAudioFragment(audio string) (string, error) {
 	return "", errors.New("GetIdFromAudioFragment")
 }
 
-func titleOf(t map[string]interface{}) (string, error) {
-	if title, ok := t["Id"].(string); ok {
-		return replaceSpacesInTitle(title), nil
+func getIdFromBody(t map[string]interface{}) (string, error) {
+	if id, ok := t["Id"].(string); ok {
+		return replaceSpacesWithPlusSymbols(id), nil
 	}
-	return "", errors.New("titleOf")
+	return "", errors.New("getIdFromBody")
 }
 
 // Replace spaces in the title with plus signs, as the AudD API returns a title
 // with spaces.
-func replaceSpacesInTitle(title string) string {
-	return strings.ReplaceAll(title, " ", "+")
+func replaceSpacesWithPlusSymbols(id string) string {
+	return strings.ReplaceAll(id, " ", "+")
 }

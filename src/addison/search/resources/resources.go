@@ -13,7 +13,7 @@ func searchTrack(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&t); err == nil {
 		if base64audio, ok := t["Audio"].(string); ok {
 			if base64audio != "" {
-				if title, err := service.SearchAuddTracksAPI(base64audio); err == nil && title != "" {
+				if title, err := service.SearchAuddRecognitionAPI(base64audio); err == nil && title != "" {
 					u := map[string]interface{}{"Id": title}
 					if err := json.NewEncoder(w).Encode(u); err != nil {
 						w.WriteHeader(http.StatusInternalServerError)
