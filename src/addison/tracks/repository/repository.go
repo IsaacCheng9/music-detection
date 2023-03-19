@@ -43,7 +43,11 @@ func Create() int {
 func Read(id string) (Track, int64) {
 	const query = "SELECT * FROM Tracks WHERE Id = ?"
 	if stmt, err := repo.DB.Prepare(query); err == nil {
-		defer stmt.Close()
+		defer func(stmt *sql.Stmt) {
+			if err := stmt.Close(); err != nil {
+				log.Fatal(err)
+			}
+		}(stmt)
 		var track Track
 		row := stmt.QueryRow(id)
 		if err := row.Scan(&track.Id, &track.Audio); err == nil {
@@ -58,7 +62,11 @@ func Read(id string) (Track, int64) {
 func ListAllIds() ([]string, int64) {
 	const query = "SELECT Id FROM Tracks"
 	if stmt, err := repo.DB.Prepare(query); err == nil {
-		defer stmt.Close()
+		defer func(stmt *sql.Stmt) {
+			if err := stmt.Close(); err != nil {
+				log.Fatal(err)
+			}
+		}(stmt)
 		rows, err := stmt.Query()
 		if err == nil {
 			var ids = make([]string, 0)
@@ -79,7 +87,11 @@ func ListAllIds() ([]string, int64) {
 func Update(track Track) int64 {
 	const query = "UPDATE Tracks SET Audio = ? WHERE Id = ?"
 	if stmt, err := repo.DB.Prepare(query); err == nil {
-		defer stmt.Close()
+		defer func(stmt *sql.Stmt) {
+			if err := stmt.Close(); err != nil {
+				log.Fatal(err)
+			}
+		}(stmt)
 		if res, err := stmt.Exec(track.Audio, track.Id); err == nil {
 			if n, err := res.RowsAffected(); err == nil {
 				return n
@@ -92,7 +104,11 @@ func Update(track Track) int64 {
 func Insert(track Track) int64 {
 	const query = "INSERT INTO Tracks (Id, Audio) VALUES (?, ?)"
 	if stmt, err := repo.DB.Prepare(query); err == nil {
-		defer stmt.Close()
+		defer func(stmt *sql.Stmt) {
+			if err := stmt.Close(); err != nil {
+				log.Fatal(err)
+			}
+		}(stmt)
 		if res, err := stmt.Exec(track.Id, track.Audio); err == nil {
 			if n, err := res.RowsAffected(); err == nil {
 				return n
@@ -105,7 +121,11 @@ func Insert(track Track) int64 {
 func Delete(id string) int64 {
 	const query = "DELETE FROM Tracks WHERE Id = ?"
 	if stmt, err := repo.DB.Prepare(query); err == nil {
-		defer stmt.Close()
+		defer func(stmt *sql.Stmt) {
+			if err := stmt.Close(); err != nil {
+				log.Fatal(err)
+			}
+		}(stmt)
 		if res, err := stmt.Exec(id); err == nil {
 			if n, err := res.RowsAffected(); err == nil {
 				return n

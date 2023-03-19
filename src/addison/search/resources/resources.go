@@ -15,12 +15,14 @@ func searchTrack(w http.ResponseWriter, r *http.Request) {
 			if base64audio != "" {
 				if title, err := service.SearchAuddTracksAPI(base64audio); err == nil && title != "" {
 					u := map[string]interface{}{"Id": title}
-					json.NewEncoder(w).Encode(u)
+					if err := json.NewEncoder(w).Encode(u); err != nil {
+						w.WriteHeader(500)
+					}
 					// 200 OK - the track has been found.
 					w.WriteHeader(200)
 				} else if err != nil {
-					// 500 Internal Server Error - the API was unable to process the
-					// request.
+					// 500 Internal Server Error - the API was unable to process
+					// the request.
 					w.WriteHeader(500)
 				} else {
 					// 404 Not Found - the track could not be recognised.

@@ -49,7 +49,9 @@ func getTrackFromFragment(w http.ResponseWriter, r *http.Request) {
 	// Part 2: Get the audio fragment from the ID using the Tracks microservice.
 	if audio, err := service.GetAudioFromId(id); err == nil && audio != "" {
 		u := map[string]interface{}{"Audio": audio}
-		json.NewEncoder(w).Encode(u)
+		if err := json.NewEncoder(w).Encode(u); err != nil {
+			w.WriteHeader(500)
+		}
 		// 200 OK - the matching track for the audio fragment has been found.
 		w.WriteHeader(200)
 	} else if err != nil {

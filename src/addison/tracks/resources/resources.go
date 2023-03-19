@@ -41,7 +41,9 @@ func readTrack(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 	if track, numFound := repository.Read(id); numFound > 0 {
 		d := repository.Track{Id: track.Id, Audio: track.Audio}
-		json.NewEncoder(w).Encode(d)
+		if err := json.NewEncoder(w).Encode(d); err != nil {
+			w.WriteHeader(500)
+		}
 		// 200 OK - the track has been returned successfully.
 		w.WriteHeader(200)
 	} else if numFound == 0 {
@@ -55,7 +57,9 @@ func readTrack(w http.ResponseWriter, r *http.Request) {
 
 func listAllTrackIds(w http.ResponseWriter, _ *http.Request) {
 	if tracks, numFound := repository.ListAllIds(); numFound >= 0 {
-		json.NewEncoder(w).Encode(tracks)
+		if err := json.NewEncoder(w).Encode(tracks); err != nil {
+			w.WriteHeader(500)
+		}
 		// 200 OK - the list of tracks has been returned successfully.
 		w.WriteHeader(200)
 	} else {

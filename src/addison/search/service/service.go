@@ -3,11 +3,13 @@ package service
 import (
 	"encoding/json"
 	"errors"
+	"io"
+	"log"
 	"net/http"
 	"net/url"
 )
 
-// Store the API token for the AudD API.
+// !IMPORTANT: Store the API token for the AudD API.
 const TOKEN = "a17de6c97a4dcc228fc6e051a19fbea3"
 
 func titleOf(t map[string]interface{}) (string, error) {
@@ -26,7 +28,11 @@ func SearchAuddTracksAPI(base64Audio string) (string, error) {
 		"return":    {"apple_music,spotify"},
 	}
 	response, _ := http.PostForm("https://api.audd.io/", data)
-	defer response.Body.Close()
+	defer func(Body io.ReadCloser) {
+		if err := Body.Close(); err != nil {
+			log.Fatal(err)
+		}
+	}(response.Body)
 	t := map[string]interface{}{}
 	if err := json.NewDecoder(response.Body).Decode(&t); err == nil {
 		if title, err := titleOf(t); err == nil {
