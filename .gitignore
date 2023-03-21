@@ -20,3 +20,6 @@ token.txt
 # Output files
 Icon*
 input*
+
+# DB files
+*.db
