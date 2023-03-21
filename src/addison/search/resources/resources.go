@@ -9,13 +9,13 @@ import (
 )
 
 func searchTrack(w http.ResponseWriter, r *http.Request) {
-	t := map[string]interface{}{}
-	if err := json.NewDecoder(r.Body).Decode(&t); err == nil {
-		if base64audio, ok := t["Audio"].(string); ok {
+	decodedTrack := map[string]interface{}{}
+	if err := json.NewDecoder(r.Body).Decode(&decodedTrack); err == nil {
+		if base64audio, ok := decodedTrack["Audio"].(string); ok {
 			if base64audio != "" {
 				if title, err := service.SearchAuddRecognitionAPI(base64audio); err == nil && title != "" {
-					u := map[string]interface{}{"Id": title}
-					if err := json.NewEncoder(w).Encode(u); err != nil {
+					trackId := map[string]interface{}{"Id": title}
+					if err := json.NewEncoder(w).Encode(trackId); err != nil {
 						w.WriteHeader(http.StatusInternalServerError)
 					}
 					// 200 OK - the track has been found.
