@@ -21,6 +21,7 @@ func getTitleFromBody(t map[string]interface{}) (string, error) {
 	return "", errors.New("getTitleFromBody")
 }
 
+// AudD Music Recognition API Docs: https://docs.audd.io/
 func SearchAuddRecognitionAPI(base64Audio string) (string, error) {
 	data := url.Values{
 		"api_token": {TOKEN},
