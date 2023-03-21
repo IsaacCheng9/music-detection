@@ -8,13 +8,13 @@ import (
 )
 
 func getTrackFromFragment(w http.ResponseWriter, r *http.Request) {
-	t := map[string]interface{}{}
+	decodedTrack := map[string]interface{}{}
 	var id string
 
 	// Part 1: Get the ID of the track from the audio fragment using the Search
 	// microservice.
-	if err := json.NewDecoder(r.Body).Decode(&t); err == nil {
-		if base64Audio, ok := t["Audio"].(string); ok {
+	if err := json.NewDecoder(r.Body).Decode(&decodedTrack); err == nil {
+		if base64Audio, ok := decodedTrack["Audio"].(string); ok {
 			if base64Audio != "" {
 				if title, err := service.GetIdFromAudioFragment(base64Audio); err == nil && title != "" {
 					id = title
@@ -48,8 +48,8 @@ func getTrackFromFragment(w http.ResponseWriter, r *http.Request) {
 
 	// Part 2: Get the audio fragment from the ID using the Tracks microservice.
 	if audio, err := service.GetAudioFromId(id); err == nil && audio != "" {
-		u := map[string]interface{}{"Audio": audio}
-		if err := json.NewEncoder(w).Encode(u); err != nil {
+		encodedAudio := map[string]interface{}{"Audio": audio}
+		if err := json.NewEncoder(w).Encode(encodedAudio); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 		// 200 OK - the matching track for the audio fragment has been found.

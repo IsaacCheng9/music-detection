@@ -14,9 +14,9 @@ func GetAudioFromId(id string) (string, error) {
 	if req, err := http.NewRequest("GET", uri, nil); err == nil {
 		if rsp, err := client.Do(req); err == nil {
 			if rsp.StatusCode == 200 {
-				t := map[string]interface{}{}
-				if err := json.NewDecoder(rsp.Body).Decode(&t); err == nil {
-					if audio, err := getAudioFromBody(t); err == nil {
+				decodedBody := map[string]interface{}{}
+				if err := json.NewDecoder(rsp.Body).Decode(&decodedBody); err == nil {
+					if audio, err := getAudioFromBody(decodedBody); err == nil {
 						return audio, nil
 					}
 				}
@@ -28,8 +28,8 @@ func GetAudioFromId(id string) (string, error) {
 	return "", errors.New("GetAudioFromId")
 }
 
-func getAudioFromBody(t map[string]interface{}) (string, error) {
-	if audio, ok := t["Audio"].(string); ok {
+func getAudioFromBody(body map[string]interface{}) (string, error) {
+	if audio, ok := body["Audio"].(string); ok {
 		return audio, nil
 	}
 	return "", errors.New("getAudioFromBody")
@@ -42,9 +42,9 @@ func GetIdFromAudioFragment(audio string) (string, error) {
 	if req, err := http.NewRequest("POST", uri, bytes.NewBuffer(jsonData)); err == nil {
 		if rsp, err := client.Do(req); err == nil {
 			if rsp.StatusCode == 200 {
-				t := map[string]interface{}{}
-				if err := json.NewDecoder(rsp.Body).Decode(&t); err == nil {
-					if id, err := getIdFromBody(t); err == nil {
+				decodedBody := map[string]interface{}{}
+				if err := json.NewDecoder(rsp.Body).Decode(&decodedBody); err == nil {
+					if id, err := getIdFromBody(decodedBody); err == nil {
 						return id, nil
 					}
 				}
@@ -56,8 +56,8 @@ func GetIdFromAudioFragment(audio string) (string, error) {
 	return "", errors.New("GetIdFromAudioFragment")
 }
 
-func getIdFromBody(t map[string]interface{}) (string, error) {
-	if id, ok := t["Id"].(string); ok {
+func getIdFromBody(body map[string]interface{}) (string, error) {
+	if id, ok := body["Id"].(string); ok {
 		return replaceSpacesWithPlusSymbols(id), nil
 	}
 	return "", errors.New("getIdFromBody")
