@@ -14,10 +14,10 @@ type Repository struct {
 var repo Repository
 
 func Init() {
-	if db, err := sql.Open("sqlite3", "/tmp/test.db"); err == nil {
+	if db, err := sql.Open("sqlite3", "test.db"); err == nil {
 		repo = Repository{DB: db}
 	} else {
-		log.Fatal("Database initialisation")
+		log.Fatal(err)
 	}
 }
 
