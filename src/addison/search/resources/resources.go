@@ -29,10 +29,9 @@ func searchTrack(w http.ResponseWriter, r *http.Request) {
 					w.WriteHeader(http.StatusNotFound)
 				}
 			} else {
-				// 404 Not Found - the track could not be recognised.
-				w.WriteHeader(http.StatusNotFound)
+				// 400 Bad Request - no audio was found in the file provided.
+				w.WriteHeader(http.StatusBadRequest)
 			}
-
 		} else {
 			// 400 Bad Request - the request could not be decoded by the server
 			// as the 'Audio' field is missing.
