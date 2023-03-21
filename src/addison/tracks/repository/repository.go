@@ -69,16 +69,16 @@ func ListAllIds() ([]string, int64) {
 		}(stmt)
 		rows, err := stmt.Query()
 		if err == nil {
-			var ids = make([]string, 0)
+			var trackIdList = make([]string, 0)
 			for rows.Next() {
 				var id string
 				if err := rows.Scan(&id); err == nil {
-					ids = append(ids, id)
+					trackIdList = append(trackIdList, id)
 				} else {
 					return []string{}, -1
 				}
 			}
-			return ids, int64(len(ids))
+			return trackIdList, int64(len(trackIdList))
 		}
 	}
 	return []string{}, -1

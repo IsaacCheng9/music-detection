@@ -40,12 +40,10 @@ func readTrack(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 	if track, numFound := repository.Read(id); numFound > 0 {
-		d := repository.Track{Id: track.Id, Audio: track.Audio}
-		if err := json.NewEncoder(w).Encode(d); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
+		matchingTrack := repository.Track{Id: track.Id, Audio: track.Audio}
 		// 200 OK - the track has been returned successfully.
 		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(matchingTrack)
 	} else if numFound == 0 {
 		// 404 Not Found - the track does not exist.
 		w.WriteHeader(http.StatusNotFound)
@@ -56,12 +54,10 @@ func readTrack(w http.ResponseWriter, r *http.Request) {
 }
 
 func listAllTrackIds(w http.ResponseWriter, _ *http.Request) {
-	if tracks, numFound := repository.ListAllIds(); numFound >= 0 {
-		if err := json.NewEncoder(w).Encode(tracks); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
+	if trackIdList, numFound := repository.ListAllIds(); numFound >= 0 {
 		// 200 OK - the list of tracks has been returned successfully.
 		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(trackIdList)
 	} else {
 		// 500 Internal Server Error - the database is not available.
 		w.WriteHeader(http.StatusInternalServerError)
