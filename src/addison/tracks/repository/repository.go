@@ -93,8 +93,8 @@ func Update(track Track) int64 {
 			}
 		}(stmt)
 		if res, err := stmt.Exec(track.Audio, track.Id); err == nil {
-			if n, err := res.RowsAffected(); err == nil {
-				return n
+			if numRowsAffected, err := res.RowsAffected(); err == nil {
+				return numRowsAffected
 			}
 		}
 	}
@@ -110,8 +110,8 @@ func Insert(track Track) int64 {
 			}
 		}(stmt)
 		if res, err := stmt.Exec(track.Id, track.Audio); err == nil {
-			if n, err := res.RowsAffected(); err == nil {
-				return n
+			if numRowsAffected, err := res.RowsAffected(); err == nil {
+				return numRowsAffected
 			}
 		}
 	}
@@ -127,8 +127,8 @@ func Delete(id string) int64 {
 			}
 		}(stmt)
 		if res, err := stmt.Exec(id); err == nil {
-			if n, err := res.RowsAffected(); err == nil {
-				return n
+			if numRowsAffected, err := res.RowsAffected(); err == nil {
+				return numRowsAffected
 			}
 		}
 	}

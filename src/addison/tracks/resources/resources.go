@@ -14,11 +14,11 @@ func updateTrack(w http.ResponseWriter, r *http.Request) {
 	var track repository.Track
 	if err := json.NewDecoder(r.Body).Decode(&track); err == nil {
 		if id == track.Id {
-			if n := repository.Update(track); n > 0 {
+			if numRowsAffected := repository.Update(track); numRowsAffected > 0 {
 				// 204 No Content - the track already existed and has been
 				// updated successfully.
 				w.WriteHeader(http.StatusNoContent)
-			} else if n := repository.Insert(track); n > 0 {
+			} else if numRowsAffected := repository.Insert(track); numRowsAffected > 0 {
 				// 201 Created - the track has been created successfully.
 				w.WriteHeader(http.StatusCreated)
 			} else {
@@ -71,10 +71,10 @@ func listAllTrackIds(w http.ResponseWriter, _ *http.Request) {
 func deleteTrack(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	if n := repository.Delete(id); n > 0 {
+	if numRowsAffected := repository.Delete(id); numRowsAffected > 0 {
 		// 204 No Content - the track has been deleted successfully.
 		w.WriteHeader(http.StatusNoContent)
-	} else if n == 0 {
+	} else if numRowsAffected == 0 {
 		// 404 Not Found - the track does not exist.
 		w.WriteHeader(http.StatusNotFound)
 	} else {
