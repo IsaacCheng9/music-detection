@@ -15,11 +15,9 @@ func searchTrack(w http.ResponseWriter, r *http.Request) {
 			if base64audio != "" {
 				if title, err := service.SearchAuddRecognitionAPI(base64audio); err == nil && title != "" {
 					trackId := map[string]interface{}{"Id": title}
-					if err := json.NewEncoder(w).Encode(trackId); err != nil {
-						w.WriteHeader(http.StatusInternalServerError)
-					}
 					// 200 OK - the track has been found.
 					w.WriteHeader(http.StatusOK)
+					json.NewEncoder(w).Encode(trackId)
 				} else if err != nil {
 					// 500 Internal Server Error - the API was unable to process
 					// the request.
